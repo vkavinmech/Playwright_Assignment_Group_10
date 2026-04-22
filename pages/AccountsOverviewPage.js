@@ -1,17 +1,6 @@
-import { parseLastDollarAmount } from '../lib/money.js';
+import { parseLargestDollarAmount } from '../utils/money.js';
 
 const ROW_HAS_DOLLAR = /\$\s*[0-9]/;
-
-function accountTypePattern(keyword) {
-  const u = keyword.toUpperCase();
-  if (u.includes('CHECK')) {
-    return /CHECK(ING)?|\*\s*CHECK|CHK\b|PERSONAL\s+CHECK/i;
-  }
-  if (u.includes('SAV')) {
-    return /SAV(INGS)?|\*\s*SAV|PERSONAL\s+SAV/i;
-  }
-  return new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-}
 
 /** Accounts Overview — balances and navigation to account activity / new account. */
 export class AccountsOverviewPage {
@@ -56,8 +45,8 @@ export class AccountsOverviewPage {
   async accountRowContaining(keyword) {
     await this.waitForAccountRows();
     const rows = this.accountDataRows();
-    const p = accountTypePattern(keyword);
-    const byText = rows.filter({ hasText: p });
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const byText = rows.filter({ hasText: new RegExp(escaped, 'i') });
     if ((await byText.count()) > 0) return byText.first();
     const linked = rows.filter({ has: this.page.getByRole('link') });
     const n = await linked.count();
@@ -74,7 +63,7 @@ export class AccountsOverviewPage {
 
   async balanceOnRow(keyword) {
     const row = await this.accountRowContaining(keyword);
-    return parseLastDollarAmount(await row.innerText());
+    return parseLargestDollarAmount(await row.innerText());
   }
 
   async openAccountActivityFor(keyword) {
@@ -113,7 +102,7 @@ export class AccountsOverviewPage {
     const balances = [];
     for (let i = 0; i < n; i++) {
       const text = await rows.nth(i).innerText();
-      balances.push(parseLastDollarAmount(text));
+      balances.push(parseLargestDollarAmount(text));
     }
     return balances;
   }
@@ -129,7 +118,7 @@ export class AccountsOverviewPage {
   async balanceOnFirstLinkedRow() {
     const row = this.firstLinkedAccountRow();
     await row.waitFor();
-    return parseLastDollarAmount(await row.innerText());
+    return parseLargestDollarAmount(await row.innerText());
   }
 
   async openFirstLinkedAccountActivity() {

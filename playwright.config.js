@@ -1,11 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
-import { loadConfig } from './lib/config.js';
+import { baseURL } from './config/site.js';
 
-const cfg = loadConfig();
+const slowMo = parseInt(process.env.BROWSER_SLOW_MO_MS || '0', 10) || 0;
+const headless =
+  process.env.HEADLESS === '1' ||
+  String(process.env.BROWSER_HEADLESS || '').toLowerCase() === 'true' ||
+  !!process.env.CI;
 
 export default defineConfig({
   testDir: './tests',
-  /** External ParaBank UI — enough headroom without keeping slow tests near the limit. */
   timeout: 60_000,
   globalSetup: './global-setup.js',
   fullyParallel: false,
@@ -16,12 +19,11 @@ export default defineConfig({
   use: {
     ...devices['Desktop Chrome'],
     locale: 'en-US',
-    headless: cfg.isHeadless(),
-    launchOptions: {
-      slowMo: cfg.getSlowMoMs(),
-    },
-    actionTimeout: cfg.defaultTimeoutMs(),
-    navigationTimeout: cfg.navigationTimeoutMs(),
+    baseURL: baseURL(),
+    headless,
+    launchOptions: { slowMo },
+    actionTimeout: 45_000,
+    navigationTimeout: 60_000,
     trace: 'on-first-retry',
   },
   projects: [{ name: 'chromium' }],

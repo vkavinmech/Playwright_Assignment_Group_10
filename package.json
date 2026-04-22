@@ -7,7 +7,7 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
-    "test:headless": "BROWSER_HEADLESS=true playwright test",
+    "test:headless": "HEADLESS=1 playwright test",
     "test:ui": "playwright test --ui",
     "install:browsers": "playwright install chromium"
   },

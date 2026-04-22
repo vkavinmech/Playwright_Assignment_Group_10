@@ -1,19 +1,16 @@
-import { loadConfig } from '../lib/config.js';
-import { LoginPage } from '../pages/login.page.js';
-import { AccountsOverviewPage } from '../pages/accounts-overview.page.js';
+import { testData } from '../utils/testData.js';
+import { LoginPage } from '../pages/LoginPage.js';
+import { AccountsOverviewPage } from '../pages/AccountsOverviewPage.js';
 
 /**
  * Log in and stop on Accounts Overview once account rows are visible.
  * @param {import('@playwright/test').Page} page
- * @returns {Promise<{ cfg: ReturnType<typeof loadConfig>, overview: AccountsOverviewPage }>}
  */
 export async function loginToAccountsOverview(page) {
-  const cfg = loadConfig();
   const login = new LoginPage(page);
-  await login.gotoLanding(cfg.baseUrl());
-  await login.login(cfg.bankUsername(), cfg.bankPassword());
+  await login.loginToApplication(testData.username, testData.password);
   const overview = new AccountsOverviewPage(page);
   await overview.waitForHeading();
   await overview.waitForAccountRows();
-  return { cfg, overview };
+  return { overview };
 }

@@ -1,4 +1,4 @@
-import { escapeRegExp } from '../lib/escapeRegex.js';
+import { paths } from '../config/site.js';
 
 /** One-time customer registration (global setup). */
 export class RegisterPage {
@@ -7,25 +7,24 @@ export class RegisterPage {
     this.page = page;
   }
 
-  async navigateToRegister(registerUrl) {
-    await this.page.goto(registerUrl, { waitUntil: 'load' });
+  async navigateToRegister() {
+    await this.page.goto(paths.register, { waitUntil: 'load' });
     await this.page.getByRole('heading', { name: 'Signing up is easy!' }).waitFor();
   }
 
-  /** @param {ReturnType<import('../lib/config.js').loadConfig>} cfg */
-  async registerFromConfig(cfg) {
-    await this.navigateToRegister(cfg.registerUrl());
-    await this.fillField('customer.firstName', 'First Name', cfg.registerFirstName());
-    await this.fillField('customer.lastName', 'Last Name', cfg.registerLastName());
-    await this.fillField('customer.address.street', 'Address', cfg.registerStreet());
-    await this.fillField('customer.address.city', 'City', cfg.registerCity());
-    await this.fillField('customer.address.state', 'State', cfg.registerState());
-    await this.fillField('customer.address.zipCode', 'Zip Code', cfg.registerZip());
-    await this.fillField('customer.phoneNumber', 'Phone', cfg.registerPhone());
-    await this.fillField('customer.ssn', 'SSN', cfg.registerSsn());
-    await this.fillField('customer.username', 'Username', cfg.bankUsername());
-    await this.fillField('customer.password', 'Password', cfg.bankPassword());
-    await this.fillField('repeatedPassword', 'Confirm', cfg.bankPassword());
+  async registerFromTestData(data) {
+    await this.navigateToRegister();
+    await this.fillField('customer.firstName', 'First Name', data.registerFirstName);
+    await this.fillField('customer.lastName', 'Last Name', data.registerLastName);
+    await this.fillField('customer.address.street', 'Address', data.registerStreet);
+    await this.fillField('customer.address.city', 'City', data.registerCity);
+    await this.fillField('customer.address.state', 'State', data.registerState);
+    await this.fillField('customer.address.zipCode', 'Zip Code', data.registerZip);
+    await this.fillField('customer.phoneNumber', 'Phone', data.registerPhone);
+    await this.fillField('customer.ssn', 'SSN', data.registerSsn);
+    await this.fillField('customer.username', 'Username', data.username);
+    await this.fillField('customer.password', 'Password', data.password);
+    await this.fillField('repeatedPassword', 'Confirm', data.password);
 
     await this.submitRegister();
     await this.page.waitForLoadState('domcontentloaded');
@@ -66,10 +65,7 @@ export class RegisterPage {
       await byName.first().fill(value);
       return;
     }
-    await this.page
-      .getByLabel(new RegExp(`^${escapeRegExp(labelPrefix)}`, 'i'))
-      .first()
-      .fill(value);
+    await this.page.getByLabel(labelPrefix, { exact: false }).first().fill(value);
   }
 
   async submitRegister() {

@@ -17,3 +17,20 @@ export function parseLastDollarAmount(text) {
   if (last === null) throw new Error(`No number found in: ${text}`);
   return last;
 }
+
+/**
+ * Largest amount written as `$…` or `$ …` in the text.
+ * Use for account table rows where `parseLastDollarAmount` can pick a trailing `$0` minimum.
+ */
+export function parseLargestDollarAmount(text) {
+  if (text == null) throw new Error('text is null');
+  const amounts = [];
+  const re = /\$\s*([\d,]+(?:\.\d+)?)/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    const n = parseFloat(m[1].replace(/,/g, ''));
+    if (!Number.isNaN(n)) amounts.push(n);
+  }
+  if (amounts.length === 0) return parseLastDollarAmount(text);
+  return Math.max(...amounts);
+}

@@ -1,4 +1,4 @@
-import { parseLastDollarAmount } from '../lib/money.js';
+import { parseLargestDollarAmount } from '../utils/money.js';
 
 /** Account Activity / transaction history for the selected account. */
 export class TransactionHistoryPage {
@@ -33,10 +33,10 @@ export class TransactionHistoryPage {
     const text = await panel.innerText();
     for (const line of text.split(/\r?\n/)) {
       if (line.toLowerCase().includes('balance') && line.includes('$')) {
-        return parseLastDollarAmount(line);
+        return parseLargestDollarAmount(line);
       }
     }
-    return parseLastDollarAmount(text);
+    return parseLargestDollarAmount(text);
   }
 
   async hasHistoryRowMatching(pattern) {

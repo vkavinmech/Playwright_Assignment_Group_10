@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { loginToAccountsOverview } from '../helpers/session.js';
-import { TransactionHistoryPage } from '../pages/transaction-history.page.js';
+import { TransactionHistoryPage } from '../pages/TransactionHistoryPage.js';
 
 // Flow: log in → open first account → expect Account Activity UI (table or empty message).
 test('opening the first account shows Account Activity and a transaction area', async ({ page }) => {
