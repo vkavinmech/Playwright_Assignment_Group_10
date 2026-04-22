@@ -78,3 +78,23 @@ export class RegisterPage {
     await submit.click();
   }
 }
+
+export class AppRegisterPage {
+  constructor(page) {
+    this.page = page;
+    this.email = page.locator('#email');
+    this.password = page.locator('#password');
+    this.registerBtn = page.locator('#register');
+    this.errorMsg = page.locator('.error');
+  }
+
+  async goto() {
+    await this.page.goto('/register');
+  }
+
+  async register(email, password) {
+    await this.email.fill(email);
+    await this.password.fill(password);
+    await this.registerBtn.click();
+  }
+}

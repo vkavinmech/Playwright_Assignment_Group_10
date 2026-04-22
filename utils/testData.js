@@ -26,6 +26,16 @@ export const users = {
   },
 };
 
+export const validUser = {
+  email: env('APP_AUTH_VALID_EMAIL', 'test@example.com'),
+  password: env('APP_AUTH_VALID_PASSWORD', '123456'),
+};
+
+export const invalidUser = {
+  email: env('APP_AUTH_INVALID_EMAIL', 'wrong@test.com'),
+  password: env('APP_AUTH_INVALID_PASSWORD', 'wrong123'),
+};
+
 const loanEdgeCase = { amount: '999999', downPayment: '0' };
 
 export const loanData = {

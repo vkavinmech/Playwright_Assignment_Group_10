@@ -6,6 +6,7 @@ export function baseURL() {
 export const paths = {
   home: '/parabank/index.htm',
   register: '/parabank/register.htm',
+  lookup: '/parabank/lookup.htm',
   overview: '/parabank/overview.htm',
   openNewAccount: '/parabank/openaccount.htm',
   requestLoan: '/parabank/requestloan.htm',
